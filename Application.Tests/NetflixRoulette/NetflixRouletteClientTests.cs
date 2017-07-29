@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Octogami.SixDegreesOfNetflix.Application.NetflixRoulette;
@@ -8,12 +7,12 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.NetflixRoulette
 {
     public class NetflixRouletteClientTests
     {
-        private NetflixRouletteClient Client;
+        private NetflixRouletteClient _client;
 
         [SetUp]
         public void SetUp()
         {
-            Client = new NetflixRouletteClient(new HttpClient());
+            _client = new NetflixRouletteClient();
         }
 
         [Test]
@@ -23,10 +22,11 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.NetflixRoulette
             var request = new NetflixRouletteRequest {Title = "The Boondocks", Year = 2005};
 
             // Act
-            var response = await Client.GetSingleAsync(request);
+            var (response, error) = await _client.GetSingleAsync(request);
 
             // Assert
             Assert.AreEqual("The Boondocks", response.show_title);
+            Assert.IsNull(error);
         }
 
         [Test]
@@ -36,10 +36,11 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.NetflixRoulette
             var request = new NetflixRouletteRequest {Title = "The Boondocks", Year = 2005};
 
             // Act
-            var response = await Client.GetSingleAsync(request);
+            var (response, error) = await _client.GetSingleAsync(request);
 
             // Assert
             Assert.AreEqual("The Boondocks", response.show_title);
+            Assert.IsNull(error);
         }
 
         [Test]
@@ -49,12 +50,13 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.NetflixRoulette
             var request = new NetflixRouletteRequest {Actor = "Nicolas Cage"};
 
             // Act
-            var response = await Client.GetManyAsync(request);
+            var (response, error) = await _client.GetManyAsync(request);
 
             // Assert
             var responseList = response.ToList();
-            Assert.Greater(responseList.Count(), 1);
+            Assert.Greater(responseList.Count, 1);
             Assert.IsTrue(responseList.First().show_cast.Contains("Nicolas Cage"));
+            Assert.IsNull(error);
         }
 
         [Test]
@@ -64,12 +66,13 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.NetflixRoulette
             var request = new NetflixRouletteRequest {Director = "Quentin Tarantino"};
 
             // Act
-            var response = await Client.GetManyAsync(request);
+            var (response, error) = await _client.GetManyAsync(request);
 
             // Assert
             var responseList = response.ToList();
-            Assert.Greater(response.Count(), 1);
+            Assert.Greater(response.Count, 1);
             Assert.IsTrue(responseList.First().director.Contains("Tarantino"));
+            Assert.IsNull(error);
         }
     }
 }

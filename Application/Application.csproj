@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Octogami.SixDegreesOfNetflix.Application</RootNamespace>
     <AssemblyName>Octogami.SixDegreesOfNetflix.Application</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -44,8 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NetflixRoulette\ErrorCode.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteByTitleRequest.cs" />
+    <Compile Include="NetflixRoulette\NetflixRouletteError.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteClient.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteException.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteRequest.cs" />

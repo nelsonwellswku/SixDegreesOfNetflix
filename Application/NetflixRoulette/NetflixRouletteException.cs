@@ -11,7 +11,5 @@ namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
         public NetflixRouletteException(string message, Exception innerException) : base(message, innerException)
         {
         }
-
-        public ErrorCode ErrorCode { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,11 +10,11 @@ namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
 {
     public class NetflixRouletteClient
     {
-        private readonly HttpClient _httpClient;
+        public HttpClient HttpClient { private get; set; }
 
-        public NetflixRouletteClient(HttpClient httpClient)
+        public NetflixRouletteClient()
         {
-            _httpClient = httpClient;
+            HttpClient = new HttpClient {BaseAddress = new Uri("https://netflixroulette.net")};
         }
 
         /// <summary>
@@ -21,7 +22,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public Task<NetflixRouletteResponse> GetSingleAsync(NetflixRouletteRequest request)
+        public Task<(NetflixRouletteResponse, NetflixRouletteError)> GetSingleAsync(NetflixRouletteRequest request)
         {
             throw new NotImplementedException();
         }
@@ -31,18 +32,25 @@ namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<List<NetflixRouletteResponse>> GetManyAsync(NetflixRouletteRequest request)
+        public async Task<(List<NetflixRouletteResponse>, NetflixRouletteError)> GetManyAsync(NetflixRouletteRequest request)
         {
             var url = BuildRequestUrl(request);
-            var httpResponse = await _httpClient.GetAsync(url);
+            var httpResponse = await HttpClient.GetAsync(url);
             var jsonContent = await httpResponse.Content.ReadAsStringAsync();
-            var deserialized = JsonConvert.DeserializeObject<List<NetflixRouletteResponse>>(jsonContent);
-            return deserialized;
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                var successResponse = JsonConvert.DeserializeObject<List<NetflixRouletteResponse>>(jsonContent);
+                return (successResponse, null);
+            }
+
+            var errorResponse = JsonConvert.DeserializeObject<NetflixRouletteError>(jsonContent);
+            return (null, errorResponse);
         }
 
         private static string BuildRequestUrl(NetflixRouletteRequest request)
         {
-            var baseUrl = "https://netflixroulette.net/api/api.php?";
+            var baseUrl = "/api/api.php?";
             var stringBuilder = new StringBuilder(baseUrl);
 
             if (request.Title != null)
