@@ -14,7 +14,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
             HttpClient = new HttpClient {BaseAddress = new Uri("https://netflixroulette.net")};
         }
 
-        public HttpClient HttpClient { private get; set; }
+        public HttpClient HttpClient { get; set; }
 
         /// <summary>
         ///     Get a single response object. Use this when searching by title or title and year.
@@ -24,6 +24,11 @@ namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
         public async Task<(NetflixRouletteResponse, NetflixRouletteError)> GetSingleAsync(
             NetflixRouletteRequest request)
         {
+            if (request.Title == null)
+            {
+                throw new ArgumentException("Title can not be null.");
+            }
+
             var url = BuildRequestUrl(request);
             var httpResponse = await HttpClient.GetAsync(url);
             var jsonContent = await httpResponse.Content.ReadAsStringAsync();
@@ -46,6 +51,11 @@ namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
         public async Task<(List<NetflixRouletteResponse>, NetflixRouletteError)> GetManyAsync(
             NetflixRouletteRequest request)
         {
+            if (request.Actor == null && request.Director == null)
+            {
+                throw new ArgumentException("Either actor or director must be provided. Both can not be null.");
+            }
+
             var url = BuildRequestUrl(request);
             var httpResponse = await HttpClient.GetAsync(url);
             var jsonContent = await httpResponse.Content.ReadAsStringAsync();

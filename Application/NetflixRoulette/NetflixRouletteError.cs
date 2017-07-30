@@ -1,4 +1,6 @@
-﻿namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
+﻿// ReSharper disable InconsistentNaming
+
+namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
 {
     public class NetflixRouletteError
     {

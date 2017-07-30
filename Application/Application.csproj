@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="NetflixRoulette\NetflixRouletteError.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteClient.cs" />
+    <Compile Include="NetflixRoulette\NetflixRouletteException.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteRequest.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
