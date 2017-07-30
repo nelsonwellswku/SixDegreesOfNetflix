@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B9E8A0E9-FC3D-4390-AE67-B6E9956E639C}</ProjectGuid>
+    <ProjectGuid>{B9993B93-4380-4959-9574-65A3693EA0D7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Octogami.SixDegreesOfNetflix.Application</RootNamespace>
-    <AssemblyName>Octogami.SixDegreesOfNetflix.Application</AssemblyName>
+    <RootNamespace>Octogami.SixDegreesOfNetflix.Application.Tests</RootNamespace>
+    <AssemblyName>Octogami.SixDegreesOfNetflix.Application.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.7.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.7.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,15 +44,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NetflixRoulette\NetflixRouletteError.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteClient.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteException.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteRequest.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteResponse.cs" />
+    <Compile Include="NetflixRoulette\NetflixRouletteClientTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj">
+      <Project>{b9e8a0e9-fc3d-4390-ae67-b6e9956e639c}</Project>
+      <Name>Application</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
