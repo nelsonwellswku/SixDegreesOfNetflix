@@ -38,7 +38,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
                 Name = "John Smith",
                 MoviesActedIn = new List<string> {"Movie One", "Movie Two"}
             };
-            await actorRepository.CreateActorAsync(actor);
+            await actorRepository.SaveActorAsync(actor);
 
             // Assert
             var query = DocumentClient.CreateGremlinQuery(Graph, $"g.V('{actor.Id}')");
