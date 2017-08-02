@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
@@ -14,28 +13,29 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
     public class ActorRepositoryTests
     {
         private GraphDatabaseConfiguration Config { get; set; }
-        private DocumentClient DocumentClient { get; set; }
-        private DocumentCollection Graph { get; set; }
+        private GremlinClient GremlinClient { get; set; }
 
         [SetUp]
         public void SetUp()
         {
             Config = new GraphDatabaseConfiguration();
-            DocumentClient = new DocumentClient(Config.Uri, Config.AuthKey);
-            DocumentClient.CreateDatabaseIfNotExistsAsync(new Database {Id = Config.Name}).Wait();
-            Graph = DocumentClient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(Config.Name),
+            var documentClient = new DocumentClient(Config.Uri, Config.AuthKey);
+            documentClient.CreateDatabaseIfNotExistsAsync(new Database {Id = Config.Name}).Wait();
+            var graph = documentClient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(Config.Name),
                 new DocumentCollection {Id = Config.CollectionName}).Result;
 
             // Empty out the database so each test starts fresh
-            var query = DocumentClient.CreateGremlinQuery(Graph, "g.V().drop()");
+            var query = documentClient.CreateGremlinQuery(graph, "g.V().drop()");
             query.ExecuteNextAsync().Wait();
+
+            GremlinClient = new GremlinClient(documentClient, graph);
         }
 
         [Test]
         public async Task CanAddAnActorToTheGraph()
         {
             // Arrange
-            var actorRepository = new ActorRepository(DocumentClient, Graph);
+            var actorRepository = new ActorRepository(GremlinClient);
 
             // Act
             var actor = new Actor
@@ -46,22 +46,16 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
             await actorRepository.SaveActorAsync(actor);
 
             // Assert
-            var query = DocumentClient.CreateGremlinQuery(Graph, $"g.V('{actor.Id}')");
-            while (query.HasMoreResults)
-            {
-                var feed = await query.ExecuteNextAsync<Vertex>();
-                var vertex = feed.Single();
-                Assert.That(vertex.GetVertexProperties("name").First().Value.Equals("John Smith"));
-            }
+            var query = $"g.V('{actor.Id}')";
+            var results = await GremlinClient.ExecuteQueryAsync<Vertex>(query);
+            Assert.That(results.Single().GetVertexProperties("name").First().Value.Equals("John Smith"));
 
-            query = DocumentClient.CreateGremlinQuery(Graph, $"g.V('{actor.Id}').outE('actedIn').inV().hasLabel('movie')");
+            query = $"g.V('{actor.Id}').outE('actedIn').inV().hasLabel('movie')";
+            results = await GremlinClient.ExecuteQueryAsync<Vertex>(query);
             var moviesList = new List<string>();
-            while (query.HasMoreResults)
+            foreach (var vertex in results)
             {
-                foreach (var vertex in await query.ExecuteNextAsync<Vertex>())
-                {
-                    moviesList.Add((string) vertex.GetVertexProperties("title").First().Value);
-                }
+                moviesList.Add((string)vertex.GetVertexProperties("title").First().Value);
             }
 
             Assert.That(moviesList, Is.EquivalentTo(actor.MoviesActedIn));
@@ -71,7 +65,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
         public async Task WillNotCreateDuplicateActorsOrMovies()
         {
             // Arrange
-            var actorRepository = new ActorRepository(DocumentClient, Graph);
+            var actorRepository = new ActorRepository(GremlinClient);
 
             // Act
             var actor = new Actor
@@ -86,26 +80,15 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
             }
 
             // Assert
-            var query = DocumentClient.CreateGremlinQuery(Graph, "g.V().count()");
-            long vertexCount = 0;
-            while (query.HasMoreResults)
-            {
-                var feed = await query.ExecuteNextAsync<dynamic>();
-                vertexCount = feed.Single();
-            }
-
+            var query = "g.V().count()";
+            var results = await GremlinClient.ExecuteQueryAsync<dynamic>(query);
+            long vertexCount = results.Single();
             Assert.That(vertexCount, Is.EqualTo(5));
 
-            query = DocumentClient.CreateGremlinQuery(Graph, "g.E().count()");
-            long edgeCount= 0;
-            while (query.HasMoreResults)
-            {
-                var feed = await query.ExecuteNextAsync<dynamic>();
-                edgeCount = feed.Single();
-            }
-
+            query = "g.E().count()";
+            results = await GremlinClient.ExecuteQueryAsync<dynamic>(query);
+            long edgeCount = results.Single();
             Assert.That(edgeCount, Is.EqualTo(4));
         }
-        
     }
 }
