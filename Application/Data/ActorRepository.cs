@@ -84,7 +84,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
             }
 
             // This should never happen
-            return Guid.Empty;
+            throw new InvalidOperationException("Unable to find or create a movie vertex.");
         }
 
         private async Task CreateEdgeIfNotExistsAsync(Guid actorId, Guid movieId)
