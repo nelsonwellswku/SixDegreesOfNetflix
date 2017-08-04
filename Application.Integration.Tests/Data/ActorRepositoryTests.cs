@@ -7,6 +7,7 @@ using Microsoft.Azure.Graphs;
 using Microsoft.Azure.Graphs.Elements;
 using NUnit.Framework;
 using Octogami.SixDegreesOfNetflix.Application.Data;
+using Octogami.SixDegreesOfNetflix.Application.Domain;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
 {

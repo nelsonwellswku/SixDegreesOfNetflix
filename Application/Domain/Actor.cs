@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Octogami.SixDegreesOfNetflix.Application.Data
+namespace Octogami.SixDegreesOfNetflix.Application.Domain
 {
     public class Actor
     {
