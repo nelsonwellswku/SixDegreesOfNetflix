@@ -27,10 +27,12 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Domain
         [SetUp]
         public void SetUp()
         {
-            _johnnyRequest = new NetflixRouletteRequest();
-            _marlaRequest = new NetflixRouletteRequest();
-            _timothyRequest = new NetflixRouletteRequest();
-            _laylaRequest = new NetflixRouletteRequest();
+            _netflixClientMock = Substitute.For<INetflixRouletteClient>();
+
+            _johnnyRequest = new NetflixRouletteRequest { Actor = "Johnny" };
+            _marlaRequest = new NetflixRouletteRequest { Actor = "Marla" };
+            _timothyRequest = new NetflixRouletteRequest { Actor = "Timothy" };
+            _laylaRequest = new NetflixRouletteRequest { Actor = "Layla" };
 
             _girlsNightOut = new MoviesActedIn
             {
@@ -108,8 +110,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Domain
             NetflixRouletteRequest request,
             List<MoviesActedIn> showsActedIn)
         {
-            _netflixClientMock = Substitute.For<INetflixRouletteClient>();
-            _netflixClientMock.GetManyAsync(request)
+            _netflixClientMock.GetManyAsync(Arg.Is<NetflixRouletteRequest>(x => x.Actor == request.Actor))
                 .Returns(Task.FromResult((showsActedIn.Select(x => new NetflixRouletteResponse
                 {
                     show_title = x.MovieTitle,

@@ -14,9 +14,11 @@ namespace Octogami.SixDegreesOfNetflix.Application.Domain
             _netflixRouletteClient = netflixRouletteClient;
         }
 
-        public Task<IEnumerable<Actor>> GetActorsInGraphAsync(string name, int iterations)
+        public async Task<IEnumerable<Actor>> GetActorsInGraphAsync(string name, int iterations)
         {
-            return Task.FromResult(Enumerable.Empty<Actor>());
+            var (success, error) = await _netflixRouletteClient.GetManyAsync(new NetflixRouletteRequest {Actor = name});
+
+            return Enumerable.Empty<Actor>();
         }
     }
 }
