@@ -42,7 +42,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
             var actor = new Actor
             {
                 Name = "John Smith",
-                MoviesActedIn = new List<string> {"Movie One", "Movie Two"}
+                MoviesActedIn = new HashSet<string> {"Movie One", "Movie Two"}
             };
             await actorRepository.SaveActorAsync(actor);
 
@@ -72,7 +72,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
             var actor = new Actor
             {
                 Name = "Keanu Reeves",
-                MoviesActedIn = new List<string> {"The Matrix", "Speed", "Constantine", "John Wick"}
+                MoviesActedIn = new HashSet<string> {"The Matrix", "Speed", "Constantine", "John Wick"}
             };
 
             foreach (var i in Enumerable.Range(0, 10))

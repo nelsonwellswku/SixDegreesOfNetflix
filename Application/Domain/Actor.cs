@@ -7,13 +7,13 @@ namespace Octogami.SixDegreesOfNetflix.Application.Domain
     {
         public Actor()
         {
-            MoviesActedIn = new List<string>();
+            MoviesActedIn = new HashSet<string>();
         }
 
         public Guid Id { get; set; }
 
         public string Name { get; set; }
 
-        public List<string> MoviesActedIn { get; set; }
+        public HashSet<string> MoviesActedIn { get; set; }
     }
 }

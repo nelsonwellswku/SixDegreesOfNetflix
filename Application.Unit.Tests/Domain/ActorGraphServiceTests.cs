@@ -85,11 +85,14 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Domain
         }
 
 
+        // Iteration 1: Johnny's Movies
+        // Iteration 2: Marla's Movies
+        // Iteration 3: Timothy's Movies
         [Test]
         public async Task GetActorForThreeIterations()
         {
             // Arrange
-            
+
             // Act
             var results = await _actorGraphService.GetActorsInGraphAsync("Johnny", 3);
 
@@ -102,8 +105,21 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Domain
             Assert.That(johnny.MoviesActedIn, Is.EquivalentTo(new[] { "Girl's Night Out"}));
             Assert.That(marla.MoviesActedIn, Is.EquivalentTo(new[] { "Come Sail Away", "Girl's Night Out"}));
             Assert.That(timothy.MoviesActedIn, Is.EquivalentTo(new[] { "Come Sail Away", "Wicked on West End"}));
+        }
 
-            Assert.That(dictionary.ContainsKey("Layla"), Is.False);
+        [Test]
+        public async Task NoActorShouldBeRequestedMoreThanOnce()
+        {
+            // Arrange
+
+            // Act
+            var results = await _actorGraphService.GetActorsInGraphAsync("Johnny", 3);
+
+            // Assert
+            await _netflixClientMock.Received(1).GetManyAsync(Arg.Is<NetflixRouletteRequest>(x => x.Actor == "Johnny"));
+            await _netflixClientMock.Received(1).GetManyAsync(Arg.Is<NetflixRouletteRequest>(x => x.Actor == "Marla"));
+            await _netflixClientMock.Received(1).GetManyAsync(Arg.Is<NetflixRouletteRequest>(x => x.Actor == "Timothy"));
+            await _netflixClientMock.DidNotReceive().GetManyAsync(Arg.Is<NetflixRouletteRequest>(x => x.Actor == "Layla"));
         }
 
         private void SetUpResponse(
