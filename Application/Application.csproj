@@ -142,6 +142,7 @@
     <Compile Include="Data\GraphDatabaseConfiguration.cs" />
     <Compile Include="Data\GremlinClient.cs" />
     <Compile Include="Data\VertexExtensions.cs" />
+    <Compile Include="Domain\IActorGraphService.cs" />
     <Compile Include="NetflixRoulette\INetflixRouletteClient.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteError.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteClient.cs" />
