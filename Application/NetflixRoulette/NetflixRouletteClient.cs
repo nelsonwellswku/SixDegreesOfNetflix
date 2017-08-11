@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Octogami.SixDegreesOfNetflix.Application.NetflixRoulette
 {
-    public class NetflixRouletteClient
+    public class NetflixRouletteClient : INetflixRouletteClient
     {
         public NetflixRouletteClient()
         {

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Graphs.Elements;
+using Octogami.SixDegreesOfNetflix.Application.Domain;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Data
 {
