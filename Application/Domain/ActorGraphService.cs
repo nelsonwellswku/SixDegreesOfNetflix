@@ -15,7 +15,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Domain
             _netflixRouletteClient = netflixRouletteClient;
         }
 
-        public async Task<IEnumerable<Actor>> GetActorsInGraphAsync(string name, int iterations)
+        public async Task<IEnumerable<Actor>> GetActorsFromExternalDataSourceAsync(string name, int iterations)
         {
             var actorLookup = new ConcurrentDictionary<string, Actor>(StringComparer.InvariantCultureIgnoreCase);
             var requestCache = new ConcurrentDictionary<string, byte>();

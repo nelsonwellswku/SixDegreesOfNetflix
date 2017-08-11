@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MediatR, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediatR.3.0.1\lib\net45\MediatR.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Azure.Documents.Client, Version=1.14.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.DocumentDB.1.14.0\lib\net45\Microsoft.Azure.Documents.Client.dll</HintPath>
     </Reference>
@@ -136,6 +139,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\IActorRepository.cs" />
     <Compile Include="Domain\ActorGraphService.cs" />
     <Compile Include="Data\ActorRepository.cs" />
     <Compile Include="Domain\Actor.cs" />
@@ -143,6 +147,7 @@
     <Compile Include="Data\GremlinClient.cs" />
     <Compile Include="Data\VertexExtensions.cs" />
     <Compile Include="Domain\IActorGraphService.cs" />
+    <Compile Include="Feature\PopulateGraphForActorCommand.cs" />
     <Compile Include="NetflixRoulette\INetflixRouletteClient.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteError.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteClient.cs" />

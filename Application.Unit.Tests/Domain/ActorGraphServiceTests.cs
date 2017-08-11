@@ -94,7 +94,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Domain
             // Arrange
 
             // Act
-            var results = await _actorGraphService.GetActorsInGraphAsync("Johnny", 3);
+            var results = await _actorGraphService.GetActorsFromExternalDataSourceAsync("Johnny", 3);
 
             // Assert
             var dictionary = results.ToDictionary(x => x.Name, x => x);
@@ -113,7 +113,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Domain
             // Arrange
 
             // Act
-            var results = await _actorGraphService.GetActorsInGraphAsync("Johnny", 3);
+            var results = await _actorGraphService.GetActorsFromExternalDataSourceAsync("Johnny", 3);
 
             // Assert
             await _netflixClientMock.Received(1).GetManyAsync(Arg.Is<NetflixRouletteRequest>(x => x.Actor == "Johnny"));

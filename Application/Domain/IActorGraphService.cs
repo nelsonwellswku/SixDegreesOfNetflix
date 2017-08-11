@@ -12,6 +12,6 @@ namespace Octogami.SixDegreesOfNetflix.Application.Domain
         /// <param name="iterations"></param>
         /// <remarks>This is not a great interface.</remarks>
         /// <returns></returns>
-        Task<IEnumerable<Actor>> GetActorsInGraphAsync(string name, int iterations);
+        Task<IEnumerable<Actor>> GetActorsFromExternalDataSourceAsync(string name, int iterations);
     }
 }
