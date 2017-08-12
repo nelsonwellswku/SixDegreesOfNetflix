@@ -1,16 +1,13 @@
-﻿using System;
-using System.Configuration;
-
-namespace Octogami.SixDegreesOfNetflix.Application.Data
+﻿namespace Octogami.SixDegreesOfNetflix.Application.Data
 {
     public class GraphDatabaseConfiguration
     {
-        public Uri Uri => new Uri(ConfigurationManager.AppSettings["graphDbUri"]);
+        public string Uri { get; set; }
 
-        public string Name => ConfigurationManager.AppSettings["graphDbDatabaseName"];
+        public string AuthKey { get; set; }
 
-        public string AuthKey => ConfigurationManager.AppSettings["graphDbAuthKey"];
+        public string Name { get; set; }
 
-        public string CollectionName => ConfigurationManager.AppSettings["graphDbCollectionName"];
+        public string CollectionName { get; set; }
     }
 }

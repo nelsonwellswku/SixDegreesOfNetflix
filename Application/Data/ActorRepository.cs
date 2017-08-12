@@ -8,9 +8,9 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
 {
     public class ActorRepository : IActorRepository
     {
-        private readonly GremlinClient _gremlinClient;
+        private readonly IGremlinClient _gremlinClient;
 
-        public ActorRepository(GremlinClient gremlinClient)
+        public ActorRepository(IGremlinClient gremlinClient)
         {
             _gremlinClient = gremlinClient;
         }

@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\IActorRepository.cs" />
+    <Compile Include="Data\IGremlinClient.cs" />
     <Compile Include="Domain\ActorGraphService.cs" />
     <Compile Include="Data\ActorRepository.cs" />
     <Compile Include="Domain\Actor.cs" />

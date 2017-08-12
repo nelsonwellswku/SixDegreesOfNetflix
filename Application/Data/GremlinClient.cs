@@ -7,11 +7,6 @@ using Microsoft.Azure.Graphs;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Data
 {
-    public interface IGremlinClient
-    {
-        Task<IList<T>> ExecuteQueryAsync<T>(string gremlinQuery);
-    }
-
     public class GremlinClient : IGremlinClient
     {
         private readonly DocumentClient _documentClient;
