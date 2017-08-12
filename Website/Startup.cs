@@ -47,7 +47,7 @@ namespace Octogami.SixDegreesOfNetflix.Website
             services.AddScoped<INetflixRouletteClient, NetflixRouletteClient>();
 
             var dbCreated = false;
-            services.AddScoped(typeof(DocumentClient), ctx =>
+            services.AddSingleton(typeof(DocumentClient), ctx =>
             {
                 var config = ctx.GetService<IOptions<GraphDatabaseConfiguration>>();
                 var client = new DocumentClient(new Uri(config.Value.Uri), config.Value.AuthKey);
