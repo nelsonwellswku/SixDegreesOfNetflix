@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Octogami.SixDegreesOfNetflix.Application.Feature;
+using Octogami.SixDegreesOfNetflix.Website.Models;
 
 namespace Octogami.SixDegreesOfNetflix.Website.Controllers
 {
@@ -14,17 +15,28 @@ namespace Octogami.SixDegreesOfNetflix.Website.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        public async Task<IActionResult> Degrees(string actorOne, string actorTwo)
+        [HttpPost]
+        public async Task<IActionResult> Populate(string actorOne, string actorTwo)
         {
-            var command = new PopulateGraphForActorCommand() {ActorName = actorOne};
-            await _mediator.Send(command);
+            var commandForActorOne = new PopulateGraphForActorCommand { ActorName = actorOne };
+            var commandForActorTwo = new PopulateGraphForActorCommand { ActorName = actorTwo };
 
-            return View();
+            await _mediator.Send(commandForActorOne);
+            await _mediator.Send(commandForActorTwo);
+
+            return RedirectToAction("DegreesOfSeparation", new { actorOne, actorTwo });
+        }
+
+        [HttpGet]
+        public IActionResult DegreesOfSeparation(string actorOne, string actorTwo)
+        {
+            return View(new ActorsViewModel{ ActorOne = actorOne, ActorTwo = actorTwo });
         }
     }
 }

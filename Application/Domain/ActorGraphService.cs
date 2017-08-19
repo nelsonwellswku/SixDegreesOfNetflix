@@ -29,7 +29,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Domain
         // Using a concurrent dictionary as the request cache because there's no built-in concurrent set. The value is a throw-away.
         private async Task ProcessAsync(string name, int iterations, ConcurrentDictionary<string, Actor> dict, ConcurrentDictionary<string, byte> requestCache)
         {
-            if (iterations <= 0 || requestCache.ContainsKey(name) || requestCache.Count > 50)
+            if (iterations <= 0 || requestCache.ContainsKey(name) || requestCache.Count > 10)
             {
                 return;
             }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Octogami.SixDegreesOfNetflix.Application.Data;
 using Octogami.SixDegreesOfNetflix.Application.Domain;
@@ -27,9 +26,10 @@ namespace Octogami.SixDegreesOfNetflix.Application.Feature
             {
                 var actors = await _actorGraphService.GetActorsFromExternalDataSourceAsync(message.ActorName, message.Depth);
 
-                var tasks = actors.Select(actor => _actorRepository.SaveActorAsync(actor));
-
-                await Task.WhenAll(tasks);
+                foreach (var actor in actors)
+                {
+                    await _actorRepository.SaveActorAsync(actor);
+                }
             }
         }
     }
