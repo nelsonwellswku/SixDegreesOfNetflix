@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
@@ -19,8 +20,14 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
         [SetUp]
         public void SetUp()
         {
-            Config = new GraphDatabaseConfiguration();
-            var documentClient = new DocumentClient(Config.Uri, Config.AuthKey);
+            Config = new GraphDatabaseConfiguration
+            {
+                AuthKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+                CollectionName = "ActorCollection",
+                Uri = "https://localhost:8081",
+                Name = "MoviesTestDatabase"
+            };
+            var documentClient = new DocumentClient(new Uri(Config.Uri), Config.AuthKey);
             documentClient.CreateDatabaseIfNotExistsAsync(new Database {Id = Config.Name}).Wait();
             var graph = documentClient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(Config.Name),
                 new DocumentCollection {Id = Config.CollectionName}).Result;

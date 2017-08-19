@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Graphs.Elements;
@@ -6,11 +7,11 @@ using Octogami.SixDegreesOfNetflix.Application.Domain;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Data
 {
-    public class ActorRepository
+    public class ActorRepository : IActorRepository
     {
-        private readonly GremlinClient _gremlinClient;
+        private readonly IGremlinClient _gremlinClient;
 
-        public ActorRepository(GremlinClient gremlinClient)
+        public ActorRepository(IGremlinClient gremlinClient)
         {
             _gremlinClient = gremlinClient;
         }
@@ -28,7 +29,9 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
 
         private async Task CreateActorIfNotExists(Actor actor)
         {
-            var doesExistQuery = $"g.V().has('name', '{actor.Name}')";
+            var escapedActorName = EscapeForGremlinQuery(actor.Name);
+
+            var doesExistQuery = $"g.V().has('name', '{escapedActorName}')";
             var actorSearchResults = await _gremlinClient.ExecuteQueryAsync<Vertex>(doesExistQuery);
             var actorSearchVertex = actorSearchResults.SingleOrDefault();
             if (actorSearchVertex != null)
@@ -38,21 +41,25 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
             }
 
             // Actor didn't exist already, so let's create it
-            var createActorString = $"g.addV('person').property('name', '{actor.Name}')";
+            var createActorString = $"g.addV('person').property('name', '{escapedActorName}')";
             var createActorResults = await _gremlinClient.ExecuteQueryAsync<Vertex>(createActorString);
             actor.Id = createActorResults.Single().IdGuid();
         }
 
         private async Task<Guid> CreateMovieIfNotExistsAsync(string movie)
         {
-            var doesExistQuery = $"g.V().has('title', '{movie}')";
+            var escapedMovie = EscapeForGremlinQuery(movie);
+            var doesExistQuery = $"g.V().has('title', '{escapedMovie}')";
             var doesExistResults = await _gremlinClient.ExecuteQueryAsync<Vertex>(doesExistQuery);
+
             var vertex = doesExistResults.SingleOrDefault();
             if (vertex != null)
+            {
                 return vertex.IdGuid();
+            }
 
             // Movie didn't already exist, so let's create it
-            var createMovieQuery = $"g.addV('movie').property('title', '{movie}')";
+            var createMovieQuery = $"g.addV('movie').property('title', '{escapedMovie}')";
             var createMovieResults = await _gremlinClient.ExecuteQueryAsync<Vertex>(createMovieQuery);
             return createMovieResults.Single().IdGuid();
         }
@@ -67,6 +74,11 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
 
             var createEdgeString = $"g.V('{actorId}').addE('actedIn').to(g.V('{movieId}'))";
             await _gremlinClient.ExecuteQueryAsync<dynamic>(createEdgeString);
+        }
+
+        private string EscapeForGremlinQuery(string input)
+        {
+            return input.Replace("'", "\\'");
         }
     }
 }
