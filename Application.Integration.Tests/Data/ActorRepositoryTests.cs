@@ -1,42 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Graphs;
 using Microsoft.Azure.Graphs.Elements;
 using NUnit.Framework;
 using Octogami.SixDegreesOfNetflix.Application.Data;
 using Octogami.SixDegreesOfNetflix.Application.Domain;
+using Octogami.SixDegreesOfNetflix.Application.Tests.TestSupport;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
 {
     public class ActorRepositoryTests
     {
-        private GraphDatabaseConfiguration Config { get; set; }
         private GremlinClient GremlinClient { get; set; }
 
         [SetUp]
         public void SetUp()
         {
-            Config = new GraphDatabaseConfiguration
-            {
-                AuthKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-                CollectionName = "ActorCollection",
-                Uri = "https://localhost:8081",
-                Name = "MoviesTestDatabase"
-            };
-            var documentClient = new DocumentClient(new Uri(Config.Uri), Config.AuthKey);
-            documentClient.CreateDatabaseIfNotExistsAsync(new Database {Id = Config.Name}).Wait();
-            var graph = documentClient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(Config.Name),
-                new DocumentCollection {Id = Config.CollectionName}).Result;
-
             // Empty out the database so each test starts fresh
-            var query = documentClient.CreateGremlinQuery(graph, "g.V().drop()");
-            query.ExecuteNextAsync().Wait();
-
-            GremlinClient = new GremlinClient(documentClient, graph);
+            var query = "g.V().drop()";
+            GremlinClient = GremlinClientFactory.GetNewGremlinClient();
+            GremlinClient.ExecuteQueryAsync<dynamic>(query).Wait();
         }
 
         [Test]
