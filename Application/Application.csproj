@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\ActorPathRepository.cs" />
+    <Compile Include="Data\IActorPathRepository.cs" />
     <Compile Include="Data\IActorRepository.cs" />
     <Compile Include="Data\IGremlinClient.cs" />
     <Compile Include="Domain\ActorService.cs" />
@@ -151,7 +152,8 @@
     <Compile Include="Domain\ActorPath.cs" />
     <Compile Include="Domain\IActorService.cs" />
     <Compile Include="Domain\MoviePath.cs" />
-    <Compile Include="Feature\PopulateGraphForActorCommand.cs" />
+    <Compile Include="Feature\GetPathBetweenActors.cs" />
+    <Compile Include="Feature\PopulateGraphForActor.cs" />
     <Compile Include="NetflixRoulette\INetflixRouletteClient.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteError.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteClient.cs" />

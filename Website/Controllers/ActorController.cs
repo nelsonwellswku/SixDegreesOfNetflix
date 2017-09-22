@@ -34,9 +34,11 @@ namespace Octogami.SixDegreesOfNetflix.Website.Controllers
         }
 
         [HttpGet]
-        public IActionResult DegreesOfSeparation(string actorOne, string actorTwo)
+        public async Task<IActionResult> DegreesOfSeparation(GetPathBetweenActorsCommand command)
         {
-            return View(new ActorsViewModel{ ActorOne = actorOne, ActorTwo = actorTwo });
+            var path = await _mediator.Send(command);
+
+            return View(new ActorsViewModel{ ActorOne = command.ActorOne, ActorTwo = command.ActorTwo, ActorPath = path });
         }
     }
 }

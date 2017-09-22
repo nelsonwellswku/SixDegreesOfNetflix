@@ -5,7 +5,7 @@ using Octogami.SixDegreesOfNetflix.Application.Domain;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Data
 {
-    public class ActorPathRepository
+    public class ActorPathRepository : IActorPathRepository
     {
         private readonly IGremlinClient _gremlinClient;
 

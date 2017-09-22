@@ -33,7 +33,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Feature
         public async Task SavesActorsFromExternalDataSource()
         {
             // Arrange
-            var handler =new PopulateGraphForActorCommand.PopulateGraphForActorCommandHandler(_actorGraphServiceMock, _actorRepositoryMock);
+            var handler = new PopulateGraphForActorCommandHandler(_actorGraphServiceMock, _actorRepositoryMock);
 
             // Act
             await handler.Handle(new PopulateGraphForActorCommand {ActorName = "Johnny"});
