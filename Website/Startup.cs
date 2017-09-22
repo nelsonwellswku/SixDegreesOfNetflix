@@ -42,7 +42,7 @@ namespace Octogami.SixDegreesOfNetflix.Website
             services.Configure<GraphDatabaseConfiguration>(dbConfiguration);
 
             services.AddScoped<IActorRepository, ActorRepository>();
-            services.AddScoped<IActorGraphService, ActorGraphService>();
+            services.AddScoped<IActorService, ActorService>();
             services.AddScoped<IGremlinClient, GremlinClient>();
             services.AddScoped<INetflixRouletteClient, NetflixRouletteClient>();
 

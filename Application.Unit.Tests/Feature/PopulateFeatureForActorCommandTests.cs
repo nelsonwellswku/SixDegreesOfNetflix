@@ -13,13 +13,13 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Feature
 {
     public class PopulateFeatureForActorCommandTests
     {
-        private IActorGraphService _actorGraphServiceMock;
+        private IActorService _actorGraphServiceMock;
         private IActorRepository _actorRepositoryMock;
 
         [SetUp]
         public void SetUp()
         {
-            _actorGraphServiceMock = Substitute.For<IActorGraphService>();
+            _actorGraphServiceMock = Substitute.For<IActorService>();
             _actorRepositoryMock = Substitute.For<IActorRepository>();
 
             _actorGraphServiceMock.GetActorsFromExternalDataSourceAsync("Johnny", 6).Returns(new List<Actor>

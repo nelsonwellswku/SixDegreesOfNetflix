@@ -12,7 +12,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Domain
     {
         private INetflixRouletteClient _netflixClientMock;
 
-        private ActorGraphService _actorGraphService;
+        private ActorService _actorGraphService;
 
         private NetflixRouletteRequest _johnnyRequest;
         private NetflixRouletteRequest _marlaRequest;
@@ -81,7 +81,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.Unit.Tests.Domain
                 _wickedOnWestEnd
             });
 
-            _actorGraphService = new ActorGraphService(_netflixClientMock);
+            _actorGraphService = new ActorService(_netflixClientMock);
         }
 
 

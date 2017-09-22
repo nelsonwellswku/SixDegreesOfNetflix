@@ -7,11 +7,11 @@ using Octogami.SixDegreesOfNetflix.Application.NetflixRoulette;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Domain
 {
-    public class ActorGraphService : IActorGraphService
+    public class ActorService : IActorService
     {
         private readonly INetflixRouletteClient _netflixRouletteClient;
 
-        public ActorGraphService(INetflixRouletteClient netflixRouletteClient)
+        public ActorService(INetflixRouletteClient netflixRouletteClient)
         {
             _netflixRouletteClient = netflixRouletteClient;
         }

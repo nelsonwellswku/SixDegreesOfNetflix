@@ -12,19 +12,19 @@ namespace Octogami.SixDegreesOfNetflix.Application.Feature
 
         public class PopulateGraphForActorCommandHandler : IAsyncRequestHandler<PopulateGraphForActorCommand>
         {
-            private readonly IActorGraphService _actorGraphService;
+            private readonly IActorService _actorService;
             private readonly IActorRepository _actorRepository;
 
-            public PopulateGraphForActorCommandHandler(IActorGraphService actorGraphService,
+            public PopulateGraphForActorCommandHandler(IActorService actorGraphService,
                 IActorRepository actorRepository)
             {
-                _actorGraphService = actorGraphService;
+                _actorService = actorGraphService;
                 _actorRepository = actorRepository;
             }
 
             public async Task Handle(PopulateGraphForActorCommand message)
             {
-                var actors = await _actorGraphService.GetActorsFromExternalDataSourceAsync(message.ActorName, message.Depth);
+                var actors = await _actorService.GetActorsFromExternalDataSourceAsync(message.ActorName, message.Depth);
 
                 foreach (var actor in actors)
                 {

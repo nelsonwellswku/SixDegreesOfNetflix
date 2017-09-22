@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Domain
 {
-    public interface IActorGraphService
+    public interface IActorService
     {
         /// <summary>
         /// Get all of the actors in all of the movies up to a depth "iterations" from the actor passed in.
