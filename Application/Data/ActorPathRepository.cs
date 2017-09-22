@@ -19,10 +19,16 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
             var pathQuery = $"g.V('{actorOneId}').repeat(both().simplePath()).until(hasId('{actorTwoId}')).path().limit(1)";
             var pathResults = await _gremlinClient.ExecuteQueryAsync<dynamic>(pathQuery);
 
+            var objects = pathResults.FirstOrDefault()?.objects;
+            if (objects == null)
+            {
+                return null;
+            }
+
             var currentActorPath = new ActorPath();
             var root = currentActorPath;
 
-            foreach (var item in pathResults.First().objects)
+            foreach (var item in objects)
             {
                 var name = item.properties?.name?.First?.value?.Value;
                 var title = item.properties?.title?.First?.value?.Value;

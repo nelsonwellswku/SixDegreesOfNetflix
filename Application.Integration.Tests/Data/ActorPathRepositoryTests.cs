@@ -63,5 +63,34 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
                 .With           // ...
                 .Name, Is.EqualTo("Tiffany"));
         }
+
+        [Test]
+        public async Task PathIsNullWhenNoPathBetweenActors()
+        {
+            // Arrange
+            var john = new Actor
+            {
+                Name = "John",
+                MoviesActedIn = new HashSet<string> {"Some Movie"}
+            };
+
+            var tammy = new Actor
+            {
+                Name = "Tammy",
+                MoviesActedIn = new HashSet<string> {"Some Other Movie"}
+            };
+
+            var actorRepository = new ActorRepository(GremlinClient);
+            await actorRepository.SaveActorAsync(john);
+            await actorRepository.SaveActorAsync(tammy);
+
+            var actorPathRepository = new ActorPathRepository(GremlinClient);
+
+            // Act
+            var path = await actorPathRepository.GetPathBetweenActors(john.Id, tammy.Id);
+
+            // Assert
+            Assert.That(path, Is.Null);
+        }
     }
 }
