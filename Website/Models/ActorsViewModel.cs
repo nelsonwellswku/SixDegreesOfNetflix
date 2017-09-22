@@ -7,6 +7,6 @@ namespace Octogami.SixDegreesOfNetflix.Website.Models
         public string ActorOne { get; set; }
         public string ActorTwo { get; set; }
 
-        public ActorPath ActorPath { get; set; }
+        public ActorPathViewModel ActorPath { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Octogami.SixDegreesOfNetflix.Application.Feature;
@@ -9,10 +10,12 @@ namespace Octogami.SixDegreesOfNetflix.Website.Controllers
     public class ActorController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
 
-        public ActorController(IMediator mediator)
+        public ActorController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -37,8 +40,9 @@ namespace Octogami.SixDegreesOfNetflix.Website.Controllers
         public async Task<IActionResult> DegreesOfSeparation(GetPathBetweenActorsCommand command)
         {
             var path = await _mediator.Send(command);
+            var pathViewModel = _mapper.Map<ActorPathViewModel>(path);
 
-            return View(new ActorsViewModel{ ActorOne = command.ActorOne, ActorTwo = command.ActorTwo, ActorPath = path });
+            return View(new ActorsViewModel{ ActorOne = command.ActorOne, ActorTwo = command.ActorTwo, ActorPath = pathViewModel });
         }
     }
 }

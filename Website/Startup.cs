@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ using Octogami.SixDegreesOfNetflix.Application.Data;
 using Octogami.SixDegreesOfNetflix.Application.Domain;
 using Octogami.SixDegreesOfNetflix.Application.Feature;
 using Octogami.SixDegreesOfNetflix.Application.NetflixRoulette;
+using Octogami.SixDegreesOfNetflix.Website.Mapping;
 
 namespace Octogami.SixDegreesOfNetflix.Website
 {
@@ -46,6 +48,20 @@ namespace Octogami.SixDegreesOfNetflix.Website
             services.AddScoped<IActorService, ActorService>();
             services.AddScoped<IGremlinClient, GremlinClient>();
             services.AddScoped<INetflixRouletteClient, NetflixRouletteClient>();
+
+            services.AddSingleton<IMapper>(ctx =>
+            {
+                var mapperConfiguration = new MapperConfiguration(cfg =>
+                {
+                    cfg.AddProfile<ActorPathProfile>();
+                });
+
+                var mapper = new Mapper(mapperConfiguration);
+
+                ((IMapper) mapper).ConfigurationProvider.AssertConfigurationIsValid();
+
+                return mapper;
+            });
 
             var dbCreated = false;
             services.AddSingleton(typeof(DocumentClient), ctx =>
