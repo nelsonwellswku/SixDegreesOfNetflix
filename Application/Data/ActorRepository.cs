@@ -27,6 +27,40 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
             }
         }
 
+        public async Task<IList<Actor>> GetPath(Actor actorOne, Actor actorTwo)
+        {
+            var actorOneId = await GetActorId(actorOne);
+            var actorTwoId = await GetActorId(actorTwo);
+
+            var pathQuery = $"g.V('{actorOneId}').repeat(both().simplePath()).until(hasId('{actorTwoId}')).path().limit(1)";
+            var pathResults = await _gremlinClient.ExecuteQueryAsync<dynamic>(pathQuery);
+
+            var list = new List<string>();
+            var currentActor = new Actor();
+            foreach (var item in pathResults.First().objects)
+            {
+                var name = item.properties?.name?.First?.value?.Value;
+                var title = item.properties?.title?.First?.value?.Value;
+            }
+
+            return null;
+        }
+
+        private async Task<Guid> GetActorId(Actor actor)
+        {
+            var escapedActorName = EscapeForGremlinQuery(actor.Name);
+
+            var doesExistQuery = $"g.V().has('name', '{escapedActorName}')";
+            var actorSearchResults = await _gremlinClient.ExecuteQueryAsync<Vertex>(doesExistQuery);
+            var actorSearchVertex = actorSearchResults.SingleOrDefault();
+            if (actorSearchVertex != null)
+            {
+               return Guid.Parse((string)actorSearchVertex.Id);
+            }
+
+            return Guid.Empty;
+        }
+
         private async Task CreateActorIfNotExists(Actor actor)
         {
             var escapedActorName = EscapeForGremlinQuery(actor.Name);
