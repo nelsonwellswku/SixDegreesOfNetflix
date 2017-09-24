@@ -1,6 +1,16 @@
-﻿<h2>Actors</h2>
+﻿
+<h1>Six Degrees of Netflix</h1>
+
+<h2>Find a Path Between These Actors</h2>
+
 <form asp-controller="Actor" asp-action="Populate" method="post">
-    <label>Actor One</label><input name="actorOne" type="text"/>
-    <label>Actor Two</label><input name="actorTwo" type="text"/>
-    <input type="submit"/>
+    <div class="form-group">
+        <label for="actorOne">Actor One</label><input name="actorOne" type="text" class="form-control" id="actorOne" />
+    </div>
+    <div class="form-group">
+        <label for="actorTwo">Actor Two</label><input name="actorTwo" type="text" class="form-control" id="actorTwo" />
+    </div>
+    <div class="form-group">
+        <input class="btn btn-default" type="submit" />
+    </div>
 </form>

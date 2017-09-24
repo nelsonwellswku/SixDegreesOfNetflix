@@ -4,10 +4,8 @@ using Octogami.SixDegreesOfNetflix.Application.Domain;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Data
 {
-    public interface IActorRepository
+    public interface IActorPathRepository
     {
-        Task SaveActorAsync(Actor actor);
-
-        Task<Guid?> GetActorIdByName(string name);
+        Task<ActorPath> GetPathBetweenActors(Guid actorOneId, Guid actorTwoId);
     }
 }

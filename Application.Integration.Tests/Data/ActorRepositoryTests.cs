@@ -81,5 +81,20 @@ namespace Octogami.SixDegreesOfNetflix.Application.Tests.Data
             long edgeCount = results.Single();
             Assert.That(edgeCount, Is.EqualTo(4));
         }
+
+        [Test]
+        public async Task CanGetActorIdByName()
+        {
+            // Arrange
+            var actorRepository = new ActorRepository(GremlinClient);
+            var actor = new Actor { Name = "Wilbur" };
+            await actorRepository.SaveActorAsync(actor);
+
+            // Act
+            var id = await actorRepository.GetActorIdByName(actor.Name);
+
+            // Assert
+            Assert.That(id, Is.EqualTo(actor.Id).And.Not.Null);
+        }
     }
 }

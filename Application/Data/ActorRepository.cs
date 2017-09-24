@@ -27,6 +27,21 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
             }
         }
 
+        public async Task<Guid?> GetActorIdByName(string name)
+        {
+            var escapedActorName = EscapeForGremlinQuery(name);
+
+            var doesExistQuery = $"g.V().has('name', '{escapedActorName}')";
+            var actorSearchResults = await _gremlinClient.ExecuteQueryAsync<Vertex>(doesExistQuery);
+            var actorSearchVertex = actorSearchResults.SingleOrDefault();
+            if (actorSearchVertex != null)
+            {
+                return Guid.Parse((string)actorSearchVertex.Id);
+            }
+
+            return null;
+        }
+
         private async Task CreateActorIfNotExists(Actor actor)
         {
             var escapedActorName = EscapeForGremlinQuery(actor.Name);

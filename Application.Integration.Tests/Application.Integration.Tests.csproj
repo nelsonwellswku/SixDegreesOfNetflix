@@ -138,6 +138,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ActorPathRepositoryTests.cs" />
     <Compile Include="Data\ActorRepositoryTests.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteClientTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

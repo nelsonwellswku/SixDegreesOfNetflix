@@ -139,16 +139,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ActorPathRepository.cs" />
+    <Compile Include="Data\IActorPathRepository.cs" />
     <Compile Include="Data\IActorRepository.cs" />
     <Compile Include="Data\IGremlinClient.cs" />
-    <Compile Include="Domain\ActorGraphService.cs" />
+    <Compile Include="Domain\ActorService.cs" />
     <Compile Include="Data\ActorRepository.cs" />
     <Compile Include="Domain\Actor.cs" />
     <Compile Include="Data\GraphDatabaseConfiguration.cs" />
     <Compile Include="Data\GremlinClient.cs" />
     <Compile Include="Data\VertexExtensions.cs" />
-    <Compile Include="Domain\IActorGraphService.cs" />
-    <Compile Include="Feature\PopulateGraphForActorCommand.cs" />
+    <Compile Include="Domain\ActorPath.cs" />
+    <Compile Include="Domain\IActorService.cs" />
+    <Compile Include="Domain\MoviePath.cs" />
+    <Compile Include="Feature\GetPathBetweenActors.cs" />
+    <Compile Include="Feature\PopulateGraphForActor.cs" />
     <Compile Include="NetflixRoulette\INetflixRouletteClient.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteError.cs" />
     <Compile Include="NetflixRoulette\NetflixRouletteClient.cs" />
