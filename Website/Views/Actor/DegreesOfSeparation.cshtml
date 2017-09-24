@@ -1,4 +1,5 @@
 ﻿@model Octogami.SixDegreesOfNetflix.Website.Models.ActorsViewModel
+   
 
 <h1>Actors</h1>
 <h2>@Model.ActorOne</h2>
@@ -6,10 +7,4 @@
 
 <br />
 
-<h3>@Model?.ActorPath?.Name <i>acted in </i></h3>
-<h3>@Model?.ActorPath?.ActedIn?.Title <i>with</i></h3>
-<h3>@Model?.ActorPath?.ActedIn?.With?.Name <i>acted in</i></h3>
-<h3>@Model?.ActorPath?.ActedIn?.With?.ActedIn?.Title <i>with</i></h3>
-<h3>@Model?.ActorPath?.ActedIn?.With?.ActedIn?.With?.Name <i>acted in</i></h3>
-<h3>@Model?.ActorPath?.ActedIn?.With?.ActedIn?.With?.ActedIn?.Title <i>with</i></h3>
-<h3>@Model?.ActorPath?.ActedIn?.With?.ActedIn?.With?.ActedIn?.With?.Name </h3>
+<actor-path actor-path="Model.ActorPath"></actor-path>
