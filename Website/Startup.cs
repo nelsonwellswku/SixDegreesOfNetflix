@@ -119,7 +119,7 @@ namespace Octogami.SixDegreesOfNetflix.Website
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Actor}/{action=Index}/{id?}");
             });
         }
     }

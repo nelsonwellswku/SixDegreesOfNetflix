@@ -14,9 +14,14 @@ namespace Octogami.SixDegreesOfNetflix.Website.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            var stringBuilder = new StringBuilder();
-            ActorPathViewModel nextInPath = ActorPath;
+            if (ActorPath == null)
+            {
+                output.Content.SetHtmlContent($"<h3> There was no path found :( </h3>");
+                return;
+            }
 
+            var stringBuilder = new StringBuilder();
+            var nextInPath = ActorPath;
 
             while (nextInPath != null)
             {
@@ -26,7 +31,7 @@ namespace Octogami.SixDegreesOfNetflix.Website.TagHelpers
                         $"<h3>{nextInPath.Name} acted in {nextInPath.ActedIn.Title} with {nextInPath.ActedIn.With.Name}</h3>");
                 }
 
-                nextInPath = nextInPath?.ActedIn?.With;
+                nextInPath = nextInPath.ActedIn?.With;
             }
 
             output.Content.SetHtmlContent(stringBuilder.ToString());
