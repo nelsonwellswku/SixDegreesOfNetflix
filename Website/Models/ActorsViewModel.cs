@@ -1,6 +1,4 @@
-﻿using Octogami.SixDegreesOfNetflix.Application.Domain;
-
-namespace Octogami.SixDegreesOfNetflix.Website.Models
+﻿namespace Octogami.SixDegreesOfNetflix.Website.Models
 {
     public class ActorsViewModel
     {

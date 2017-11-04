@@ -13,6 +13,7 @@ using Octogami.SixDegreesOfNetflix.Application.Data;
 using Octogami.SixDegreesOfNetflix.Application.Domain;
 using Octogami.SixDegreesOfNetflix.Application.Feature;
 using Octogami.SixDegreesOfNetflix.Application.NetflixRoulette;
+using Octogami.SixDegreesOfNetflix.Application.TMDB;
 using Octogami.SixDegreesOfNetflix.Website.Mapping;
 
 namespace Octogami.SixDegreesOfNetflix.Website
@@ -45,9 +46,20 @@ namespace Octogami.SixDegreesOfNetflix.Website
 
             services.AddScoped<IActorRepository, ActorRepository>();
             services.AddScoped<IActorPathRepository, ActorPathRepository>();
-            services.AddScoped<IActorService, ActorService>();
+            services.AddScoped<IActorService, TMDBActorService>();
             services.AddScoped<IGremlinClient, GremlinClient>();
-            services.AddScoped<INetflixRouletteClient, NetflixRouletteClient>();
+
+            services.AddSingleton(ctx =>
+            {
+                var apiKey = Configuration["TmdbV3ApiKey"];
+                var client = new TMDbLib.Client.TMDbClient(apiKey)
+                {
+                    MaxRetryCount = 100
+                };
+                return client;
+            });
+
+            services.AddSingleton<ITMDbClient, TMDbClientWrapper>();
 
             services.AddSingleton<IMapper>(ctx =>
             {
