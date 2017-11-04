@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Graphs.Elements;
@@ -85,7 +84,9 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
                 $"g.V('{actorId}').outE('actedIn').as('e').inV().hasLabel('movie').has('id', '{movieId}').select('e')";
             var edgeExistsResults = await _gremlinClient.ExecuteQueryAsync<Edge>(edgeExistsQuery);
             if (edgeExistsResults.Any())
+            {
                 return;
+            }
 
             var createEdgeString = $"g.V('{actorId}').addE('actedIn').to(g.V('{movieId}'))";
             await _gremlinClient.ExecuteQueryAsync<dynamic>(createEdgeString);
@@ -93,7 +94,9 @@ namespace Octogami.SixDegreesOfNetflix.Application.Data
 
         private string EscapeForGremlinQuery(string input)
         {
-            return input.Replace("'", "\\'");
+            // TODO: Shouldn't just be removing the single quotes. Need to figure out the right way
+            // to escape them after MS swapped out the Gremlin parser for a new one.
+            return input.Replace("'", "");
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Octogami.SixDegreesOfNetflix.Application.TMDB;
-using TMDbLib.Objects.Exceptions;
 using TMDbLib.Objects.Movies;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Domain

@@ -23,6 +23,7 @@ using Credits = TMDbLib.Objects.Movies.Credits;
 
 namespace Octogami.SixDegreesOfNetflix.Application.TMDB
 {
+    // ReSharper disable once InconsistentNaming
     public interface ITMDbClient
     {
         Uri GetImageUrl(string size, string filePath, bool useSsl);
@@ -171,8 +172,7 @@ namespace Octogami.SixDegreesOfNetflix.Application.TMDB
         Task<SearchContainer<SearchTv>> GetTvShowSimilarAsync(int id, string language, int page);
         Task<SearchContainer<SearchTv>> GetTvShowRecommendationsAsync(int id, int page);
         Task<SearchContainer<SearchTv>> GetTvShowRecommendationsAsync(int id, string language, int page);
-        Task<SearchContainer<SearchTv>> GetTvShowsPopularAsync(int page, string language);
-        Task<SearchContainer<SearchTv>> GetTvShowsTopRatedAsync(int page, string language);
+
         Task<SearchContainer<SearchTv>> GetTvShowTopRatedAsync(int page, string language);
         Task<TranslationsContainerTv> GetTvShowTranslationsAsync(int id);
         Task<ResultContainer<Video>> GetTvShowVideosAsync(int id);

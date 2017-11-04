@@ -788,16 +788,6 @@ namespace Octogami.SixDegreesOfNetflix.Application.TMDB
             return _innerDbClient.GetTvShowRecommendationsAsync(id, language, page);
         }
 
-        public Task<SearchContainer<SearchTv>> GetTvShowsPopularAsync(int page, string language)
-        {
-            return _innerDbClient.GetTvShowsPopularAsync(page, language);
-        }
-
-        public Task<SearchContainer<SearchTv>> GetTvShowsTopRatedAsync(int page, string language)
-        {
-            return _innerDbClient.GetTvShowsTopRatedAsync(page, language);
-        }
-
         public Task<SearchContainer<SearchTv>> GetTvShowTopRatedAsync(int page, string language)
         {
             return _innerDbClient.GetTvShowTopRatedAsync(page, language);
