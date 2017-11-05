@@ -235,7 +235,6 @@
     <Compile Include="Data\IActorPathRepository.cs" />
     <Compile Include="Data\IActorRepository.cs" />
     <Compile Include="Data\IGremlinClient.cs" />
-    <Compile Include="Domain\NetflixRouletteActorService.cs" />
     <Compile Include="Data\ActorRepository.cs" />
     <Compile Include="Domain\Actor.cs" />
     <Compile Include="Data\GraphDatabaseConfiguration.cs" />
@@ -247,12 +246,6 @@
     <Compile Include="Domain\TMDBActorService.cs" />
     <Compile Include="Feature\GetPathBetweenActors.cs" />
     <Compile Include="Feature\PopulateGraphForActor.cs" />
-    <Compile Include="NetflixRoulette\INetflixRouletteClient.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteError.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteClient.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteException.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteRequest.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TMDB\ITMDbClient.cs" />
     <Compile Include="TMDB\TMDbClientWrapper.cs" />

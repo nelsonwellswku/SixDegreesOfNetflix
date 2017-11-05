@@ -12,7 +12,6 @@ using Microsoft.Extensions.Options;
 using Octogami.SixDegreesOfNetflix.Application.Data;
 using Octogami.SixDegreesOfNetflix.Application.Domain;
 using Octogami.SixDegreesOfNetflix.Application.Feature;
-using Octogami.SixDegreesOfNetflix.Application.NetflixRoulette;
 using Octogami.SixDegreesOfNetflix.Application.TMDB;
 using Octogami.SixDegreesOfNetflix.Website.Mapping;
 

@@ -230,7 +230,6 @@
   <ItemGroup>
     <Compile Include="Data\ActorPathRepositoryTests.cs" />
     <Compile Include="Data\ActorRepositoryTests.cs" />
-    <Compile Include="NetflixRoulette\NetflixRouletteClientTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestSupport\Constants.cs" />
     <Compile Include="TestSupport\GremlinClientFactory.cs" />
