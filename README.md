@@ -5,13 +5,23 @@ Inspired by [Six Degrees of Kevin Bacon](https://en.wikipedia.org/wiki/Six_Degre
 * Johnny Depp acted in Fear and Loathing in Las Vegas with Cameron Diaz
 * Cameron Diaz acted in Vanilla Sky with Tom Cruise
 
-The data comes from the [Netflix Roulette](http://netflixroulette.com) [API](https://netflixroulette.net/api/) so the results will only be as good as their data set. In my own testing, I've noticed that new movies aren't available. Additionally, the data is loaded into a database at the point that a user submits the form with the two actors. Because of that, I explicitly limit the number of requests to the API so that they aren't DOS'd on accident. Keep this in mind if the results aren't quite accurate.
+The data comes from the  [The Movie Database](https://www.themoviedb.org)'s API so the results will only be as good as their data set. Additionally, the data is loaded into a database at the point that a user submits the form with the two actors. Because of that, I explicitly limit the number of requests to the API so that they aren't DOS'd on accident. Keep this in mind if the results aren't quite accurate or when you notice that loading the page takes a long time :)
 
 This app was mostly developed so I could learn about the [CosmosDB Graph API](https://docs.microsoft.com/en-us/azure/cosmos-db/graph-introduction), [NSubstitute](http://nsubstitute.github.io/), and [ASP.Net Core](https://docs.microsoft.com/en-us/aspnet/core/).
 
 ## Development
 
-The CosmosDB emulator is the only external dependency. Nothing else should have to be configured by hand.
+### TMDB
+
+This project requires an API key from [The Movie Database](https://www.themoviedb.org).
+
+1. Register for TMDB and request API access.
+2. Find the **version 3** API key in your account settings.
+3. Create an environment variable named _TmdbV3ApiKey_ and set its value to your version 3 API key.
+
+### Cosmos DB
+
+This project uses CosmosDB as the data store.
 
 1. Install and start the CosmosDB emulator by following [these instructions](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator).
 2. Open the solution in Visual Studio 2017. Your mileage may vary with other development environments (Rider, VSCode).
