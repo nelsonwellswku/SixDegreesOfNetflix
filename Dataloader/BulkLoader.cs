@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.CosmosDB.BulkExecutor.Graph;
@@ -58,11 +59,14 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
             documentClient.ConnectionPolicy.RetryOptions.MaxRetryWaitTimeInSeconds = 0;
             documentClient.ConnectionPolicy.RetryOptions.MaxRetryAttemptsOnThrottledRequests = 0;
 
-            await executor.BulkImportAsync(
+            var response = await executor.BulkImportAsync(
                 graphElements,
                 enableUpsert: true,
                 cancellationToken: token
             );
+
+            Console.WriteLine("Number of documents imported " + response.NumberOfDocumentsImported);
+            Console.WriteLine("Number of bad input documents are " + response.BadInputDocuments.Count);
 
             return;
         }

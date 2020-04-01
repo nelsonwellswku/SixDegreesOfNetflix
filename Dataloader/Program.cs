@@ -21,7 +21,42 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
                 return;
             }
 
-            var records = GetRecords(filePath);
+            // var records = GetRecords(filePath);
+
+            var records = new List<MovieAndActorRecord>()
+            {
+                new MovieAndActorRecord {
+                    NameId = "JD",
+                    Actor = "Johnny Depp",
+                    TitleId = "EDSCISS",
+                    MovieTitle = "Edward Scissorhands",
+                    Year = "1990"
+                },
+                new MovieAndActorRecord
+                {
+                    NameId = "HBC",
+                    Actor = "Helena Bonham Carter",
+                    TitleId = "FGHTCLB",
+                    MovieTitle = "Fight Club",
+                    Year = "1999",
+                },
+                new MovieAndActorRecord
+                {
+                    NameId = "HBC",
+                    Actor = "Helena Bonham Carter",
+                    TitleId = "SWNYTDD",
+                    MovieTitle = "Sweeney Todd: The Demon Barber of Fleet Street",
+                    Year = "2007",
+                },
+                new MovieAndActorRecord
+                {
+                    NameId = "JD",
+                    Actor = "Johnny Depp",
+                    TitleId = "SWNYTDD",
+                    MovieTitle = "Sweeney Todd: The Demon Barber of Fleet Street",
+                    Year = "2007",
+                }
+            };
 
             var cosmosConfiguration = new CosmosConfiguration();
             var bulkLoader = new BulkLoader(cosmosConfiguration);
@@ -46,7 +81,7 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
             using (var reader = new StreamReader(filePath))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                var list = csv.GetRecords<MovieAndActorRecord>().ToList();
+                var list = csv.GetRecords<MovieAndActorRecord>().Take(100).ToList();
                 Console.WriteLine("Data input file read.");
                 return list;
             }
@@ -61,7 +96,8 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
                     x.MovieTitle,
                     x.Year
                 })
-                .Select(group => group.First());
+                .Select(group => group.First())
+                .Take(200);
 
             await bulkLoader.BulkInsertAsync(distinctMovies.Select(x =>
             {
@@ -80,7 +116,8 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
                 {
                     x.NameId,
                     x.Actor,
-                }).Select(group => group.First());
+                }).Select(group => group.First())
+                .Take(200);
 
             await bulkLoader.BulkInsertAsync(distinctActors.Select(x =>
             {
@@ -93,8 +130,9 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
 
         public static async Task InsertEdgesAsync(List<MovieAndActorRecord> records, IBulkLoader bulkLoader)
         {
-            await bulkLoader.BulkInsertAsync(records.Select(x =>
+            await bulkLoader.BulkInsertAsync(records.Take(200).Select(x =>
             {
+                Console.WriteLine($"{x.NameId}_{x.TitleId}");
                 var edge = new GremlinEdge(
                     $"{x.NameId}_{x.TitleId}",
                     "ActedIn",
@@ -102,8 +140,8 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
                     x.TitleId,
                     "ActedIn",
                     "HadActor",
-                    $"{x.NameId}_{x.TitleId}_out",
-                    $"{x.NameId}_{x.TitleId}_in"
+                    "Actor",
+                    "Movie"
                 );
                 return edge;
             }), CancellationToken.None);
