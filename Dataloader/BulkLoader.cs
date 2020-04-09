@@ -16,53 +16,38 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
 
     public class BulkLoader : IBulkLoader
     {
-        private CosmosConfiguration _cosmosConfiguration;
+        private readonly DocumentClient _documentClient;
 
-        public BulkLoader(CosmosConfiguration cosmosConfiguration)
+        private readonly CosmosGraphConfiguration _cosmosConfiguration;
+
+        public BulkLoader(DocumentClient documentClient, CosmosGraphConfiguration cosmosConfiguration)
         {
+            _documentClient = documentClient;
             _cosmosConfiguration = cosmosConfiguration;
         }
 
         public async Task BulkInsertAsync(IEnumerable<object> graphElements, CancellationToken token = default(CancellationToken))
         {
-            ConnectionPolicy connectionPolicy = new ConnectionPolicy
-            {
-                ConnectionMode = ConnectionMode.Direct,
-                ConnectionProtocol = Protocol.Tcp
-            };
+            _documentClient.ConnectionPolicy.RetryOptions.MaxRetryWaitTimeInSeconds = 30;
+            _documentClient.ConnectionPolicy.RetryOptions.MaxRetryAttemptsOnThrottledRequests = 9;
 
-            var documentClient = new DocumentClient(
-                new Uri(_cosmosConfiguration.Host),
-                _cosmosConfiguration.Password,
-                connectionPolicy
-            );
+            var resourceResponse = await _documentClient.ReadDocumentCollectionAsync(_cosmosConfiguration.DocumentCollectionLink);
 
-            await documentClient.CreateDatabaseIfNotExistsAsync(new Database() { Id = _cosmosConfiguration.DatabaseName });
-
-            PartitionKeyDefinition partitionKey = new PartitionKeyDefinition
-            {
-                Paths = new Collection<string> { $"/{_cosmosConfiguration.PartitionKey}" }
-            };
-            DocumentCollection collection = new DocumentCollection { Id = _cosmosConfiguration.CollectionName, PartitionKey = partitionKey };
-
-            var resourceResponse = await documentClient
-                .CreateDocumentCollectionIfNotExistsAsync($"/dbs/{_cosmosConfiguration.DatabaseName}", collection);
-
-            documentClient.ConnectionPolicy.RetryOptions.MaxRetryWaitTimeInSeconds = 30;
-            documentClient.ConnectionPolicy.RetryOptions.MaxRetryAttemptsOnThrottledRequests = 9;
-
-            GraphBulkExecutor executor = new GraphBulkExecutor(documentClient, resourceResponse.Resource);
+            GraphBulkExecutor executor = new GraphBulkExecutor(_documentClient, resourceResponse.Resource);
 
             await executor.InitializeAsync();
 
-            documentClient.ConnectionPolicy.RetryOptions.MaxRetryWaitTimeInSeconds = 0;
-            documentClient.ConnectionPolicy.RetryOptions.MaxRetryAttemptsOnThrottledRequests = 0;
+            _documentClient.ConnectionPolicy.RetryOptions.MaxRetryWaitTimeInSeconds = 0;
+            _documentClient.ConnectionPolicy.RetryOptions.MaxRetryAttemptsOnThrottledRequests = 0;
 
             await executor.BulkImportAsync(
                 graphElements,
                 enableUpsert: true,
                 cancellationToken: token
             );
+
+            _documentClient.ConnectionPolicy.RetryOptions.MaxRetryWaitTimeInSeconds = 30;
+            _documentClient.ConnectionPolicy.RetryOptions.MaxRetryAttemptsOnThrottledRequests = 9;
 
             return;
         }
