@@ -38,7 +38,10 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
             serviceCollection.AddSingleton<Application>();
             serviceCollection.AddSingleton<IDatabaseCreator, DatabaseCreator>();
             serviceCollection.AddSingleton<IBulkLoader, BulkLoader>();
-
+            serviceCollection.AddSingleton<IMovieInserter, MovieInserter>();
+            serviceCollection.AddSingleton<IActorInserter, ActorInserter>();
+            serviceCollection.AddSingleton<IMovieActorLinker, MovieActorLinker>();
+            serviceCollection.AddSingleton<IMovieRecordReader, MovieRecordReader>();
 
             return serviceCollection.BuildServiceProvider(validateScopes: true);
         }
