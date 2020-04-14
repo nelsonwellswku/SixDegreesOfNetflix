@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Octogami.SixDegreesOfNetflix.Dataloader
@@ -44,7 +45,7 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
             await _databaseCreator.EnsureCollectionCreated();
 
             Console.WriteLine("Reading input file...");
-            var records = _movieRecordReader.ReadRecords(filePath);
+            var records = _movieRecordReader.ReadRecords(filePath).Take(200).ToList();
             Console.WriteLine("Input file read.");
 
             Console.WriteLine("Inserting movies...");

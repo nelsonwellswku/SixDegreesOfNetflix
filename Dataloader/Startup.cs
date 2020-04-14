@@ -1,4 +1,6 @@
 using System;
+using Gremlin.Net.Driver;
+using Gremlin.Net.Structure.IO.GraphSON;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +29,7 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
                 };
 
                 var documentClient = new DocumentClient(
-                    new Uri(cosmosConfiguration.Host),
+                    new Uri($"https://{cosmosConfiguration.Host}:8081"),
                     cosmosConfiguration.Password,
                     connectionPolicy
                 );
@@ -42,6 +44,24 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
             serviceCollection.AddSingleton<IActorInserter, ActorInserter>();
             serviceCollection.AddSingleton<IMovieActorLinker, MovieActorLinker>();
             serviceCollection.AddSingleton<IMovieRecordReader, MovieRecordReader>();
+            serviceCollection.AddSingleton<Func<IGremlinClient>>(ctx =>
+            {
+                var graphConfiguration = ctx.GetService<CosmosGraphConfiguration>();
+                return new Func<IGremlinClient>(() =>
+                {
+                    Console.WriteLine(graphConfiguration.Port);
+                    var gremlinServer = new GremlinServer(
+                        graphConfiguration.Host,
+                        graphConfiguration.Port,
+                        enableSsl: graphConfiguration.UseSSL,
+                        username: graphConfiguration.Username,
+                        password: graphConfiguration.Password
+                    );
+                    Console.WriteLine(gremlinServer.Uri);
+
+                    return new GremlinClient(gremlinServer, new GraphSON2Reader(), new GraphSON2Writer(), GremlinClient.GraphSON2MimeType);
+                });
+            });
 
             return serviceCollection.BuildServiceProvider(validateScopes: true);
         }
