@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
 
         private readonly IDatabaseCreator _databaseCreator;
 
-        private readonly CosmosGraphConfiguration _graphConfiguration;
+        private readonly GraphConfiguration _graphConfiguration;
 
         private readonly IMovieInserter _movieInserter;
 
@@ -23,7 +24,7 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
         public Application(
             IBulkLoader bulkLoader,
             IDatabaseCreator databaseCreator,
-            CosmosGraphConfiguration graphConfiguration,
+            GraphConfiguration graphConfiguration,
             IMovieInserter movieInserter,
             IActorInserter actorInserter,
             IMovieRecordReader movieRecordReader,
@@ -40,12 +41,14 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
 
         public async Task RunAsync(string filePath)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             await _databaseCreator.EnsureDatabaseCreated();
 
             await _databaseCreator.EnsureCollectionCreated();
 
             Console.WriteLine("Reading input file...");
-            var records = _movieRecordReader.ReadRecords(filePath).Take(200).ToList();
+            var records = _movieRecordReader.ReadRecords(filePath);
             Console.WriteLine("Input file read.");
 
             Console.WriteLine("Inserting movies...");
@@ -59,6 +62,9 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
             Console.WriteLine("Inserting edges between nodes...");
             await _movieActorLinker.LinkRecordsAsync(records);
             Console.WriteLine("Edges inserted.");
+            stopwatch.Stop();
+
+            Console.WriteLine($"Finished executing after {stopwatch.Elapsed.TotalSeconds} seconds.");
         }
     }
 }

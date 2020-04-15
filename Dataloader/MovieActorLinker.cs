@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Gremlin.Net.Driver;
-using Microsoft.Azure.Documents;
-using Newtonsoft.Json;
 
 namespace Octogami.SixDegreesOfNetflix.Dataloader
 {

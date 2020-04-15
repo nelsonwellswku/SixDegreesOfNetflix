@@ -15,11 +15,11 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
 
     public class DatabaseCreator : IDatabaseCreator
     {
-        private readonly CosmosGraphConfiguration _graphConfiguration;
+        private readonly GraphConfiguration _graphConfiguration;
 
         private readonly DocumentClient _documentClient;
 
-        public DatabaseCreator(DocumentClient documentClient, CosmosGraphConfiguration graphConfiguration)
+        public DatabaseCreator(DocumentClient documentClient, GraphConfiguration graphConfiguration)
         {
             _documentClient = documentClient;
             _graphConfiguration = graphConfiguration;
@@ -28,7 +28,7 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
         public async Task EnsureDatabaseCreated()
         {
             Console.WriteLine($"Creating database {_graphConfiguration.DatabaseName}...");
-            await _documentClient.CreateDatabaseIfNotExistsAsync(new Database() { Id = _graphConfiguration.DatabaseName });
+            await _documentClient.CreateDatabaseIfNotExistsAsync(new Database { Id = _graphConfiguration.DatabaseName });
             Console.WriteLine("Database creation complete.");
         }
 

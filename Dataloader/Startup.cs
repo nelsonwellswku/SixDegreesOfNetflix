@@ -4,6 +4,7 @@ using Gremlin.Net.Structure.IO.GraphSON;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Octogami.SixDegreesOfNetflix.Dataloader
 {
@@ -16,12 +17,16 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
             var configurationBuilder = new ConfigurationBuilder().AddJsonFile("appSettings.json", optional: false);
             var configuration = configurationBuilder.Build();
             serviceCollection.AddSingleton<IConfiguration>(configuration);
-
-            serviceCollection.AddSingleton<CosmosGraphConfiguration>();
+            serviceCollection.Configure<DocumentConfiguration>(configuration.GetSection("Cosmos").GetSection("Document"));
+            serviceCollection.Configure<GraphConfiguration>(configuration.GetSection("Cosmos").GetSection("Graph"));
+            serviceCollection.AddTransient<DocumentConfiguration>(ctx =>
+                ctx.GetRequiredService<IOptionsMonitor<DocumentConfiguration>>().CurrentValue);
+            serviceCollection.AddTransient<GraphConfiguration>(ctx =>
+                ctx.GetRequiredService<IOptionsMonitor<GraphConfiguration>>().CurrentValue);
 
             serviceCollection.AddSingleton(x =>
             {
-                var cosmosConfiguration = x.GetRequiredService<CosmosGraphConfiguration>();
+                var documentConfiguration = x.GetRequiredService<DocumentConfiguration>();
                 ConnectionPolicy connectionPolicy = new ConnectionPolicy
                 {
                     ConnectionMode = ConnectionMode.Direct,
@@ -29,8 +34,8 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
                 };
 
                 var documentClient = new DocumentClient(
-                    new Uri($"https://{cosmosConfiguration.Host}:8081"),
-                    cosmosConfiguration.Password,
+                    new Uri($"https://{documentConfiguration.Host}:{documentConfiguration.Port}"),
+                    documentConfiguration.AuthKey,
                     connectionPolicy
                 );
 
@@ -46,10 +51,9 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
             serviceCollection.AddSingleton<IMovieRecordReader, MovieRecordReader>();
             serviceCollection.AddSingleton<Func<IGremlinClient>>(ctx =>
             {
-                var graphConfiguration = ctx.GetService<CosmosGraphConfiguration>();
+                var graphConfiguration = ctx.GetService<GraphConfiguration>();
                 return new Func<IGremlinClient>(() =>
                 {
-                    Console.WriteLine(graphConfiguration.Port);
                     var gremlinServer = new GremlinServer(
                         graphConfiguration.Host,
                         graphConfiguration.Port,
@@ -57,7 +61,6 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
                         username: graphConfiguration.Username,
                         password: graphConfiguration.Password
                     );
-                    Console.WriteLine(gremlinServer.Uri);
 
                     return new GremlinClient(gremlinServer, new GraphSON2Reader(), new GraphSON2Writer(), GremlinClient.GraphSON2MimeType);
                 });

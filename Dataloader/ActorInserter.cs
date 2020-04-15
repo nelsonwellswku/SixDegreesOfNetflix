@@ -14,9 +14,9 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
     public class ActorInserter : IActorInserter
     {
         private readonly IBulkLoader _bulkLoader;
-        private readonly CosmosGraphConfiguration _graphConfiguration;
+        private readonly GraphConfiguration _graphConfiguration;
 
-        public ActorInserter(IBulkLoader bulkLoader, CosmosGraphConfiguration graphConfiguration)
+        public ActorInserter(IBulkLoader bulkLoader, GraphConfiguration graphConfiguration)
         {
             _bulkLoader = bulkLoader;
             _graphConfiguration = graphConfiguration;
