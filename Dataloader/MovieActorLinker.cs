@@ -1,8 +1,7 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.CosmosDB.BulkExecutor.Graph.Element;
+using Gremlin.Net.Driver;
 
 namespace Octogami.SixDegreesOfNetflix.Dataloader
 {
@@ -13,29 +12,41 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
 
     public class MovieActorLinker : IMovieActorLinker
     {
-        private readonly IBulkLoader _bulkLoader;
+        private readonly Func<IGremlinClient> _gremlinClientFactory;
+        private string _insertLink = "g.V(actorId).addE('actedIn').to(g.V(titleId)).property('id', edgeId)";
 
-        public MovieActorLinker(IBulkLoader bulkLoader)
+        public MovieActorLinker(Func<IGremlinClient> gremlinClientFactory)
         {
-            _bulkLoader = bulkLoader;
+            _gremlinClientFactory = gremlinClientFactory;
         }
 
-        public Task LinkRecordsAsync(List<MovieAndActorRecord> records)
+        public async Task LinkRecordsAsync(List<MovieAndActorRecord> records)
         {
-            return _bulkLoader.BulkInsertAsync(records.Select(x =>
+            using (var gremlinClient = _gremlinClientFactory())
             {
-                var edge = new GremlinEdge(
-                    $"{x.NameId}_{x.TitleId}",
-                    "ActedIn",
-                    x.NameId,
-                    x.TitleId,
-                    "ActedIn",
-                    "HadActor",
-                    $"{x.NameId}_{x.TitleId}_out",
-                    $"{x.NameId}_{x.TitleId}_in"
-                );
-                return edge;
-            }), CancellationToken.None);
+                foreach (var item in records)
+                {
+                    var actorId = item.NameId;
+                    var titleId = item.TitleId;
+                    var edgeId = $"{item.NameId}_{item.TitleId}";
+                    try
+                    {
+                        await gremlinClient.SubmitAsync(_insertLink, new Dictionary<string, object> {
+                            { "actorId", actorId },
+                            { "titleId", titleId },
+                            { "edgeId", edgeId },
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Couldn't write link. \r\n {e.Message}");
+                        Console.WriteLine($"Actor Id: {actorId}");
+                        Console.WriteLine($"Title Id: {titleId}");
+                    }
+                }
+            }
+
+            return;
         }
     }
 }

@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.CosmosDB.BulkExecutor.Graph;
-using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace Octogami.SixDegreesOfNetflix.Dataloader
@@ -18,9 +15,9 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
     {
         private readonly DocumentClient _documentClient;
 
-        private readonly CosmosGraphConfiguration _cosmosConfiguration;
+        private readonly GraphConfiguration _cosmosConfiguration;
 
-        public BulkLoader(DocumentClient documentClient, CosmosGraphConfiguration cosmosConfiguration)
+        public BulkLoader(DocumentClient documentClient, GraphConfiguration cosmosConfiguration)
         {
             _documentClient = documentClient;
             _cosmosConfiguration = cosmosConfiguration;
