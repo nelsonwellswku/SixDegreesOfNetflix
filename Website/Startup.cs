@@ -1,136 +1,98 @@
-﻿using System;
-using AutoMapper;
+using System;
+using Gremlin.Net.Driver;
+using Gremlin.Net.Structure.IO.GraphSON;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Octogami.SixDegreesOfNetflix.Application.Data;
-using Octogami.SixDegreesOfNetflix.Application.Domain;
-using Octogami.SixDegreesOfNetflix.Application.Feature;
-using Octogami.SixDegreesOfNetflix.Application.TMDB;
-using Octogami.SixDegreesOfNetflix.Website.Mapping;
+using Octogami.SixDegreesOfNetflix.Application.Infrastructure.Configuration;
+using Octogami.SixDegreesOfNetflix.Application.Feature.GetPathBetweenActors;
 
-namespace Octogami.SixDegreesOfNetflix.Website
+namespace Website
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddRazorPages();
 
-            services.AddMediatR(typeof(PopulateGraphForActorCommand).Assembly);
+            services.AddMediatR(typeof(GetPathBetweenActorsCommand));
 
-            services.AddOptions();
+            services.Configure<DocumentConfiguration>(Configuration.GetSection("Cosmos").GetSection("Document"));
+            services.Configure<GraphConfiguration>(Configuration.GetSection("Cosmos").GetSection("Graph"));
+            services.AddScoped<DocumentConfiguration>(ctx =>
+                ctx.GetRequiredService<IOptionsMonitor<DocumentConfiguration>>().CurrentValue);
+            services.AddScoped<GraphConfiguration>(ctx =>
+                ctx.GetRequiredService<IOptionsMonitor<GraphConfiguration>>().CurrentValue);
 
-            var dbConfiguration = Configuration.GetSection("Database");
-            services.Configure<GraphDatabaseConfiguration>(dbConfiguration);
-
-            services.AddScoped<IActorRepository, ActorRepository>();
-            services.AddScoped<IActorPathRepository, ActorPathRepository>();
-            services.AddScoped<IActorService, TMDBActorService>();
-            services.AddScoped<IGremlinClient, GremlinClient>();
-
-            services.AddSingleton(ctx =>
+            services.AddSingleton(x =>
             {
-                var apiKey = Configuration["TmdbV3ApiKey"];
-                var client = new TMDbLib.Client.TMDbClient(apiKey)
+                var documentConfiguration = x.GetRequiredService<DocumentConfiguration>();
+                ConnectionPolicy connectionPolicy = new ConnectionPolicy
                 {
-                    MaxRetryCount = 100
+                    ConnectionMode = ConnectionMode.Direct,
+                    ConnectionProtocol = Protocol.Tcp
                 };
-                return client;
+
+                var documentClient = new DocumentClient(
+                    new Uri($"https://{documentConfiguration.Host}:{documentConfiguration.Port}"),
+                    documentConfiguration.AuthKey,
+                    connectionPolicy
+                );
+
+                return documentClient;
             });
 
-            services.AddSingleton<ITMDbClient, TMDbClientWrapper>();
-
-            services.AddSingleton<IMapper>(ctx =>
+            services.AddScoped<IGremlinClient>(ctx =>
             {
-                var mapperConfiguration = new MapperConfiguration(cfg =>
-                {
-                    cfg.AddProfile<ActorPathProfile>();
-                });
+                var graphConfiguration = ctx.GetService<GraphConfiguration>();
 
-                var mapper = new Mapper(mapperConfiguration);
+                var gremlinServer = new GremlinServer(
+                    graphConfiguration.Host,
+                    graphConfiguration.Port,
+                    enableSsl: graphConfiguration.UseSSL,
+                    username: graphConfiguration.Username,
+                    password: graphConfiguration.Password
+                );
 
-                ((IMapper) mapper).ConfigurationProvider.AssertConfigurationIsValid();
-
-                return mapper;
-            });
-
-            var dbCreated = false;
-            services.AddSingleton(typeof(DocumentClient), ctx =>
-            {
-                var config = ctx.GetService<IOptions<GraphDatabaseConfiguration>>();
-                var client = new DocumentClient(new Uri(config.Value.Uri), config.Value.AuthKey);
-
-                if (!dbCreated)
-                {
-                    client.CreateDatabaseIfNotExistsAsync(new Database { Id = config.Value.Name }).Wait();
-                    dbCreated = true;
-                }
-
-                return client;
-            });
-
-            var collectionCreated = false;
-            services.AddScoped(typeof(DocumentCollection), ctx =>
-            {
-                var config = ctx.GetService<IOptions<GraphDatabaseConfiguration>>();
-                var documentClient = ctx.GetService<DocumentClient>();
-
-                if (!collectionCreated)
-                {
-                   documentClient.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(config.Value.Name),
-                        new DocumentCollection { Id = config.Value.CollectionName }).Wait();
-                    collectionCreated = true;
-                }
-
-                var collectionUri = UriFactory.CreateDocumentCollectionUri(config.Value.Name, config.Value.CollectionName);
-                var collection = documentClient.ReadDocumentCollectionAsync(collectionUri).Result;
-                return collection.Resource;
+                return new GremlinClient(gremlinServer, new GraphSON2Reader(), new GraphSON2Writer(), GremlinClient.GraphSON2MimeType);
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseMvc(routes =>
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Actor}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

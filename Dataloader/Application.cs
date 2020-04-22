@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
+using Octogami.SixDegreesOfNetflix.Application.Feature.LoadRecords;
+using Octogami.SixDegreesOfNetflix.Application.Infrastructure.Data;
+using Octogami.SixDegreesOfNetflix.Application.Infrastructure.Configuration;
 
 namespace Octogami.SixDegreesOfNetflix.Dataloader
 {

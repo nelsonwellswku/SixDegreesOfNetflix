@@ -1,0 +1,15 @@
+﻿@page
+@model IndexModel
+@addTagHelper *, Website
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <form method="get">
+        <label>Actor One</label><input asp-for="ActorOne" />
+        <label>Actor Two</label><input asp-for="ActorTwo" />
+        <input type="submit" />
+    </form> 
+
+    <actor-path actor-path="Model.ActorPath"></actor-path>
+</div>

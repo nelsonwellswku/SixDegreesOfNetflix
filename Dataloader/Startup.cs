@@ -5,6 +5,9 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Octogami.SixDegreesOfNetflix.Application.Feature.LoadRecords;
+using Octogami.SixDegreesOfNetflix.Application.Infrastructure.Configuration;
+using Octogami.SixDegreesOfNetflix.Application.Infrastructure.Data;
 
 namespace Octogami.SixDegreesOfNetflix.Dataloader
 {
