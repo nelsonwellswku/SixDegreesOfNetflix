@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gremlin.Net.Driver;
+using Gremlin.Net.Driver.Exceptions;
 using MediatR;
 using Newtonsoft.Json;
 
@@ -53,21 +54,31 @@ namespace Octogami.SixDegreesOfNetflix.Application.Feature.GetPathBetweenActors
                 return null;
             }
 
-            var pathResults = await _gremlinClient.SubmitAsync<dynamic>(_getPathBetweenActorsQuery, new Dictionary<string, object> {
-                { "actorOneId", actorOneId },
-                { "actorTwoId", actorTwoId }
-            });
-
-            if (!pathResults.Any())
+            ResultSet<dynamic> pathResults = null;
+            try
             {
-                Console.WriteLine("No match found.");
+                pathResults = await _gremlinClient.SubmitAsync<dynamic>(_getPathBetweenActorsQuery, new Dictionary<string, object> {
+                    { "actorOneId", actorOneId },
+                    { "actorTwoId", actorTwoId }
+                });
+            }
+            catch (ResponseException e)
+            {
+                if (!e.Message.Contains("ServerTimeout"))
+                {
+                    throw;
+                }
+            }
+
+            if (pathResults == null || !pathResults.Any())
+            {
                 return null;
             }
 
             var serializedQueryResult = JsonConvert.SerializeObject((object)pathResults.First());
             var deserializedQueryResult = JsonConvert.DeserializeObject<RootObject>(serializedQueryResult);
 
-            var currentActorPath = new ActorPath() { Name = "nobody" };
+            var currentActorPath = new ActorPath();
             var root = currentActorPath;
 
             foreach (var vertex in deserializedQueryResult.objects)

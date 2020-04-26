@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Octogami.SixDegreesOfNetflix.Application.Feature.GetPathBetweenActors;
@@ -11,11 +10,9 @@ namespace Octogami.SixDegreesOfNetflix.Website.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            Console.WriteLine("In process");
-
             if (ActorPath == null)
             {
-                output.Content.SetHtmlContent($"<h3> There was no path found :( </h3>");
+                output.Content.SetHtmlContent($"<h3> Sorry, they're not within six degrees of each other. </h3>");
                 return;
             }
 
