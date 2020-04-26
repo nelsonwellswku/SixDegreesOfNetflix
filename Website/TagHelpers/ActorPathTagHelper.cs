@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Octogami.SixDegreesOfNetflix.Website.Models;
+using Octogami.SixDegreesOfNetflix.Application.Feature.GetPathBetweenActors;
 
 namespace Octogami.SixDegreesOfNetflix.Website.TagHelpers
 {
     public class ActorPathTagHelper : TagHelper
     {
-        public ActorPathViewModel ActorPath { get; set; }
+        public ActorPath ActorPath { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             if (ActorPath == null)
             {
-                output.Content.SetHtmlContent($"<h3> There was no path found :( </h3>");
+                output.Content.SetHtmlContent($"<h3> Sorry, they're not within six degrees of each other. </h3>");
                 return;
             }
 

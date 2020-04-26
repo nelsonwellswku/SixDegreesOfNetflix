@@ -1,0 +1,26 @@
+﻿@page
+@model IndexModel
+@addTagHelper *, Website
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <form method="get">
+        <div class="form-group">
+            <label asp-for="ActorOne">Actor One</label>
+            <input asp-for="ActorOne" class="form-control" />
+        </div>
+        <div class="form-group">
+             <label for="ActorTwo">Actor Two</label>
+             <input asp-for="ActorTwo" class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" />
+        </div>
+    </form>
+
+    @if(Model.ActorOne != null & Model.ActorTwo != null)
+    {
+        <actor-path actor-path="Model.ActorPath"></actor-path>
+    }
+
+</div>
