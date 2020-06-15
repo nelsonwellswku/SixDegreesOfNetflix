@@ -48,9 +48,9 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
             serviceCollection.AddSingleton<Application>();
             serviceCollection.AddSingleton<IDatabaseCreator, DatabaseCreator>();
             serviceCollection.AddSingleton<IBulkLoader, BulkLoader>();
-            serviceCollection.AddSingleton<IMovieInserter, MovieInserter>();
-            serviceCollection.AddSingleton<IActorInserter, ActorInserter>();
-            serviceCollection.AddSingleton<IMovieActorLinker, MovieActorLinker>();
+            serviceCollection.AddSingleton<IMovieInserter, TinkerpopMovieInserter>();
+            serviceCollection.AddSingleton<IActorInserter, TinkerpopActorInserter>();
+            serviceCollection.AddSingleton<IMovieActorLinker, TinkerpopMovieActorLinker>();
             serviceCollection.AddSingleton<IMovieRecordReader, MovieRecordReader>();
             serviceCollection.AddSingleton<Func<IGremlinClient>>(ctx =>
             {
@@ -60,12 +60,13 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
                     var gremlinServer = new GremlinServer(
                         graphConfiguration.Host,
                         graphConfiguration.Port,
-                        enableSsl: graphConfiguration.UseSSL,
-                        username: graphConfiguration.Username,
-                        password: graphConfiguration.Password
+                        enableSsl: graphConfiguration.UseSSL
+                    // username: graphConfiguration.Username,
+                    // password: graphConfiguration.Password
                     );
 
-                    return new GremlinClient(gremlinServer, new GraphSON2Reader(), new GraphSON2Writer(), GremlinClient.GraphSON2MimeType);
+                    return new GremlinClient(gremlinServer);
+                    // return new GremlinClient(gremlinServer, new GraphSON2Reader(), new GraphSON2Writer(), GremlinClient.GraphSON2MimeType);
                 });
             });
 

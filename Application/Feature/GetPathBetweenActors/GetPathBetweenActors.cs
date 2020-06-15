@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gremlin.Net.Driver;
 using Gremlin.Net.Driver.Exceptions;
+using Gremlin.Net.Structure;
 using MediatR;
-using Newtonsoft.Json;
 
 namespace Octogami.SixDegreesOfNetflix.Application.Feature.GetPathBetweenActors
 {
@@ -75,25 +75,29 @@ namespace Octogami.SixDegreesOfNetflix.Application.Feature.GetPathBetweenActors
                 return null;
             }
 
-            var serializedQueryResult = JsonConvert.SerializeObject((object)pathResults.First());
-            var deserializedQueryResult = JsonConvert.DeserializeObject<RootObject>(serializedQueryResult);
-
             var currentActorPath = new ActorPath();
             var root = currentActorPath;
 
-            foreach (var vertex in deserializedQueryResult.objects)
+            foreach (var pathResult in pathResults)
             {
-                if (vertex.label == "Actor")
+                foreach (var vertex in pathResult.Objects)
                 {
-                    currentActorPath.Name = vertex.properties.Name.First().value;
-                    currentActorPath.ActedIn = new MoviePath();
-                }
+                    var results = await _gremlinClient.SubmitAsync<dynamic>("g.V(vid).properties()", new Dictionary<string, object> { { "vid", vertex.Id } });
+                    foreach (var prop in results)
+                    {
+                        if (vertex.Label == "Actor" && prop.Key == "Name")
+                        {
+                            currentActorPath.Name = prop.Value;
+                            currentActorPath.ActedIn = new MoviePath();
+                        }
 
-                if (vertex.label == "Movie")
-                {
-                    currentActorPath.ActedIn.Title = vertex.properties.Title.First().value;
-                    currentActorPath.ActedIn.With = new ActorPath();
-                    currentActorPath = currentActorPath.ActedIn.With;
+                        if (vertex.Label == "Movie" && prop.Key == "Title")
+                        {
+                            currentActorPath.ActedIn.Title = prop.Value;
+                            currentActorPath.ActedIn.With = new ActorPath();
+                            currentActorPath = currentActorPath.ActedIn.With;
+                        }
+                    }
                 }
             }
 
@@ -102,11 +106,11 @@ namespace Octogami.SixDegreesOfNetflix.Application.Feature.GetPathBetweenActors
 
         private async Task<string> GetActorIdByName(string name)
         {
-            var results = await _gremlinClient.SubmitWithSingleResultAsync<Dictionary<string, object>>(
+            var results = await _gremlinClient.SubmitWithSingleResultAsync<Vertex>(
                 _getActorByNameQuery,
                  new Dictionary<string, object> { { "actorName", name } });
 
-            return results == null ? null : results["id"].ToString();
+            return results == null ? null : results.Id.ToString();
         }
     }
 }

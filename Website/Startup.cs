@@ -1,6 +1,5 @@
 using System;
 using Gremlin.Net.Driver;
-using Gremlin.Net.Structure.IO.GraphSON;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -67,7 +66,7 @@ namespace Website
                     password: graphConfiguration.Password
                 );
 
-                return new GremlinClient(gremlinServer, new GraphSON2Reader(), new GraphSON2Writer(), GremlinClient.GraphSON2MimeType);
+                return new GremlinClient(gremlinServer);
             });
         }
 

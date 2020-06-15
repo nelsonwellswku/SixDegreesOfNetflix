@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Octogami.SixDegreesOfNetflix.Application.Feature.LoadRecords;
 using Octogami.SixDegreesOfNetflix.Application.Infrastructure.Data;
 using Octogami.SixDegreesOfNetflix.Application.Infrastructure.Configuration;
+using System.Linq;
 
 namespace Octogami.SixDegreesOfNetflix.Dataloader
 {
@@ -45,9 +46,9 @@ namespace Octogami.SixDegreesOfNetflix.Dataloader
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            await _databaseCreator.EnsureDatabaseCreated();
+            // await _databaseCreator.EnsureDatabaseCreated();
 
-            await _databaseCreator.EnsureCollectionCreated();
+            // await _databaseCreator.EnsureCollectionCreated();
 
             Console.WriteLine("Reading input file...");
             var records = _movieRecordReader.ReadRecords(filePath);
